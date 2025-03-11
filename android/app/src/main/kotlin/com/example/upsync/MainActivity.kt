@@ -1,4 +1,4 @@
-package com.example.upsync
+package com.upsync
 
 import io.flutter.embedding.android.FlutterActivity
 
