@@ -5,7 +5,9 @@ class AppModel {
   final String updateNotes;
   final bool mandatoryUpdate;
   final String update;
+
   final DateTime updatedAt;
+  final String iconUrl;
 
   AppModel({
     required this.appId,
@@ -15,6 +17,7 @@ class AppModel {
     required this.mandatoryUpdate,
     required this.update,
     required this.updatedAt,
+    required this.iconUrl,
   });
 
   factory AppModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +29,7 @@ class AppModel {
       mandatoryUpdate: json['mandatory_update'],
       update: json['update'],
       updatedAt: DateTime.parse(json['updated_at']),
+      iconUrl: json['icon_url'] ?? 'https://picsum.photos/200',
     );
   }
 
@@ -38,6 +42,7 @@ class AppModel {
       'mandatory_update': mandatoryUpdate,
       'update': update,
       'updated_at': updatedAt.toIso8601String(),
+      'icon_url': iconUrl,
     };
   }
 }

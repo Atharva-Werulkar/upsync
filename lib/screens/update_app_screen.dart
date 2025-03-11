@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:upsync/model/api_model.dart';
 import 'package:upsync/services/backend.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class UpdateAppScreen extends StatefulWidget {
   final AppModel app;
@@ -16,6 +17,8 @@ class UpdateAppScreenState extends State<UpdateAppScreen> {
   String updateType = 'minor_update';
   bool mandatoryUpdate = false;
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -26,6 +29,9 @@ class UpdateAppScreenState extends State<UpdateAppScreen> {
   }
 
   Future<void> updateAppVersion() async {
+    setState(() {
+      isLoading = true;
+    });
     await Backend.updateAppVersion(
       AppModel(
         appId: widget.app.appId,
@@ -35,40 +41,61 @@ class UpdateAppScreenState extends State<UpdateAppScreen> {
         updateNotes: notesController.text,
         mandatoryUpdate: mandatoryUpdate,
         updatedAt: DateTime.now(),
+        iconUrl: widget.app.iconUrl,
       ),
     );
     Navigator.pop(context);
   }
 
   @override
+  void dispose() {
+    versionController.dispose();
+    notesController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Update App Version')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: versionController,
-              decoration: const InputDecoration(labelText: 'New Version'),
-            ),
-            TextField(
-              controller: notesController,
-              decoration: const InputDecoration(labelText: 'Update Notes'),
-            ),
-            SwitchListTile(
-              title: const Text('Mandatory Update'),
-              value: mandatoryUpdate,
-              onChanged: (value) => setState(() => mandatoryUpdate = value),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: updateAppVersion,
-              child: const Text('Update Version'),
-            ),
-          ],
-        ),
-      ),
+      body:
+          isLoading
+              ? const Center(child: CircularProgressIndicator.adaptive())
+              : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 60,
+                      child: ShadInput(
+                        controller: versionController,
+                        placeholder: const Text('New Version'),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 60,
+                      child: ShadInput(
+                        controller: notesController,
+                        placeholder: const Text('Update Notes'),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 60,
+                      child: ShadSwitch(
+                        value: mandatoryUpdate,
+                        onChanged:
+                            (value) => setState(() => mandatoryUpdate = value),
+                        label: const Text('Mandatory Update'),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ShadButton(
+                      onPressed: updateAppVersion,
+                      child: const Text('Update Version'),
+                    ),
+                  ],
+                ),
+              ),
     );
   }
 }
