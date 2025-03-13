@@ -20,22 +20,45 @@ class AddAppScreenState extends State<AddAppScreen> {
   bool isLoading = false;
 
   Future<void> addApp() async {
-    setState(() {
-      isLoading = true;
-    });
-    await Backend.addApp(
-      AppModel(
-        appId: appIdController.text,
-        appName: appNameController.text,
-        latestVersion: versionController.text,
-        update: updateType,
-        updateNotes: 'initial version',
-        mandatoryUpdate: false,
-        updatedAt: DateTime.now(),
-        iconUrl: 'https://picsum.photos/200',
-      ),
-    );
-    Navigator.pop(context);
+    if (appIdController.text.isNotEmpty &&
+        appNameController.text.isNotEmpty &&
+        versionController.text.isNotEmpty &&
+        updateType.isNotEmpty) {
+      setState(() {
+        isLoading = true;
+      });
+      await Backend.addApp(
+        AppModel(
+          appId: appIdController.text,
+          appName: appNameController.text,
+          latestVersion: versionController.text,
+          update: updateType,
+          updateNotes: 'initial version',
+          mandatoryUpdate: false,
+          updatedAt: DateTime.now(),
+          iconUrl: 'https://picsum.photos/200',
+        ),
+      );
+      Navigator.pop(context);
+    } else {
+      showShadDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return ShadDialog.alert(
+            title: const Text('Error'),
+            description: const Text('Please fill out all fields correctly.'),
+            actions: <Widget>[
+              ShadButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -153,7 +176,7 @@ class AddAppScreenState extends State<AddAppScreen> {
         height: 60,
         child: ShadInput(
           controller: controller,
-          placeholder: Text(label, style: TextStyles.bodytext),
+          placeholder: Text(label),
           leading: Icon(icon),
         ),
       ),

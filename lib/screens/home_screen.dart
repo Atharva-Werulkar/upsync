@@ -6,6 +6,7 @@ import 'package:upsync/screens/update_app_screen.dart';
 import 'package:upsync/services/backend.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:upsync/utils/consts.dart';
+import 'package:upsync/widgets/shimmer.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -81,13 +82,8 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     );
                   case ConnectionState.active:
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    );
                   case ConnectionState.waiting:
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    );
+                    return Shimmers.homeShimmer;
                   case ConnectionState.done:
                     if (snapshot.hasError) {
                       return RefreshIndicator.adaptive(
